@@ -37,15 +37,10 @@ app.use(express.json());
 /* NODEMAILER */
 
 const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
+    service: "gmail",
     auth: {
-        user: "srikanth_bapatu@srmap.edu.in",
-        pass: "YOUR_APP_PASSWORD"
-    },
-    tls: {
-        rejectUnauthorized: false
+        user: "srikanthreddybapatu04@gmail.com",
+        pass: "yfiq tjbp fjjl voxi"
     }
 });
 
@@ -98,7 +93,7 @@ app.post("/send-otp", async (req,res)=>
       {
           await transporter.sendMail({
 
-              from:'"Srikanth" <srikanth_bapatu@srmap.edu.in>',
+              from:'"Srikanth" <srikanthreddybapatu04@gmail.com>',
 
               to:email,
 
