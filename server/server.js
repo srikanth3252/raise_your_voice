@@ -37,14 +37,21 @@ app.use(express.json());
 /* NODEMAILER */
 
 const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    family: 4,
+    auth: {
+        user: "srikanth_bapatu@srmap.edu.in",
+        pass: "ugco tzkr oxsb qewd"
+    }
+});
 
-    service:"gmail",
-
-    auth:
-    {
-        user:"srikanth_bapatu@srmap.edu.in",
-
-        pass:"ugco tzkr oxsb qewd"
+transporter.verify((error, success) => {
+    if (error) {
+        console.log("MAIL ERROR:", error);
+    } else {
+        console.log("MAIL SERVER READY");
     }
 });
 
@@ -64,14 +71,6 @@ function generateotp()
 }
 
 
-
-transporter.verify((error, success) => {
-    if (error) {
-        console.log("MAIL ERROR:", error);
-    } else {
-        console.log("MAIL SERVER READY");
-    }
-});
 /* SEND OTP */
 
 app.post("/send-otp", async (req,res)=>
@@ -111,6 +110,8 @@ app.post("/send-otp", async (req,res)=>
       }
       catch(error)
       {
+          console.log("OTP ERROR:", error);
+
           return res.status(500).json({message:error.message});
       }
 });
