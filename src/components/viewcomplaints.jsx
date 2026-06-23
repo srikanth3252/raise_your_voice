@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import ComplaintCard from "./ComplaintCard";
+import ComplaintCard from "./complaintcard";
 
 import "../styles/viewcomplaints.css";
 
