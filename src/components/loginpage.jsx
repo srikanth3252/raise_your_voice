@@ -16,7 +16,7 @@ function Loginpage()
 
     async function callapi_toverifyotp()
     {
-        let res = await fetch("http://127.0.0.1:2000/verify-otp", {
+        let res = await fetch("https://raiseyourvoice-production.up.railway.app/verify-otp", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -30,7 +30,7 @@ function Loginpage()
 
     async function insert_usersdata()
     {   localStorage.setItem("email",email);
-        let res = await fetch("http://127.0.0.1:2000/insertusers", {
+        let res = await fetch("https://raiseyourvoice-production.up.railway.app/insertusers", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -44,7 +44,7 @@ function Loginpage()
 
     async function check_role()
     {
-         let res = await fetch("http://127.0.0.1:2000/updaterole", {
+         let res = await fetch("https://raiseyourvoice-production.up.railway.app/updaterole", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -93,7 +93,7 @@ function Loginpage()
           console.log('api is called')
            async function sendotp()
            {
-              let res=await fetch("http://127.0.0.1:2000/send-otp",{
+              let res=await fetch("https://raiseyourvoice-production.up.railway.app/send-otp",{
                     method:"POST",
                     headers:
                     {

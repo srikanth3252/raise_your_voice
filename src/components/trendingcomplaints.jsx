@@ -17,7 +17,7 @@ function Trendingcomplaints()
         try
         {
             let res = await fetch(
-                "http://127.0.0.1:2000/gettrendingcomplaints"
+                "https://raiseyourvoice-production.up.railway.app/gettrendingcomplaints"
             );
 
             let data = await res.json();

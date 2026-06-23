@@ -22,7 +22,7 @@ function ComplaintDetails()
 
     const proofUrl =
         complaint.proof
-            ? `http://127.0.0.1:2000/${complaint.proof.replace(/\\/g, "/")}`
+            ? `https://raiseyourvoice-production.up.railway.app/${complaint.proof.replace(/\\/g, "/")}`
             : "";
 
     const extension =
@@ -35,7 +35,7 @@ function ComplaintDetails()
         try
         {
             let res = await fetch(
-                "http://127.0.0.1:2000/updatecomplaintstatus",
+                "https://raiseyourvoice-production.up.railway.app/updatecomplaintstatus",
                 {
                     method: "POST",
                     headers:

@@ -15,7 +15,7 @@ function ComplaintCard({ complaint })
     {
         try
         {
-            let res=await fetch("http://127.0.0.1:2000/get_exact_complaint",{
+            let res=await fetch("https://raiseyourvoice-production.up.railway.app/get_exact_complaint",{
 
                    method:"POST",
                    headers:
@@ -45,7 +45,7 @@ function ComplaintCard({ complaint })
     {
         try
         {
-            let res=await fetch("http://127.0.0.1:2000/likes",{
+            let res=await fetch("https://raiseyourvoice-production.up.railway.app/likes",{
 
                    method:"POST",
                    headers:

@@ -17,7 +17,7 @@ function Viewcomplaints()
         try
         {
             let res = await fetch(
-                "http://127.0.0.1:2000/getcomplaints"
+                "https://raiseyourvoice-production.up.railway.app/getcomplaints"
             );
 
             let data = await res.json();

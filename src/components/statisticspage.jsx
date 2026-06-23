@@ -41,7 +41,7 @@ function Statistics() {
                 Statisticstype === "customdatecomplaints"
             ) {
                 res = await fetch(
-                    `http://127.0.0.1:2000/${Statisticstype}`,
+                    `https://raiseyourvoice-production.up.railway.app/${Statisticstype}`,
                     {
                         method: "POST",
                         headers: {
@@ -55,7 +55,7 @@ function Statistics() {
                 );
             } else {
                 res = await fetch(
-                    `http://127.0.0.1:2000/${Statisticstype}`
+                    `https://raiseyourvoice-production.up.railway.app/${Statisticstype}`
                 );
             }
 

@@ -34,7 +34,7 @@ function Raisecomplaint()
     {
        async function Store_complaints_database(formdata)
        {
-           let res=await fetch("http://127.0.0.1:2000/complaint",
+           let res=await fetch("https://raiseyourvoice-production.up.railway.app/complaint",
             {
                 method:"POST",
                 body:formdata
