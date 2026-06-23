@@ -40,10 +40,12 @@ const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
     secure: false,
-    family: 4,
     auth: {
         user: "srikanth_bapatu@srmap.edu.in",
-        pass: "ugco tzkr oxsb qewd"
+        pass: "YOUR_APP_PASSWORD"
+    },
+    tls: {
+        rejectUnauthorized: false
     }
 });
 
@@ -54,7 +56,6 @@ transporter.verify((error, success) => {
         console.log("MAIL SERVER READY");
     }
 });
-
 
 
 /* OTP STORE */
@@ -109,11 +110,12 @@ app.post("/send-otp", async (req,res)=>
           return res.status(200).json({message:"OTP sent successfully"});
       }
       catch(error)
-      {
-          console.log("OTP ERROR:", error);
-
-          return res.status(500).json({message:error.message});
-      }
+{
+    console.log("OTP ERROR FULL:", error);
+    return res.status(500).json({
+        message: error.message
+    });
+}
 });
 
 
