@@ -5,7 +5,7 @@ import Dashboard from "./components/dashboard";
 import Raisecomplaint from "./components/raisecomplaint";
 import Viewcomplaints from  "./components/viewcomplaints";
 import ComplaintCard from  "./components/complaintcard";
-import Trendingcomplaints from "./components/Trendingcomplaints";
+import Trendingcomplaints from "./components/trendingcomplaints";
 import Statistics from "./components/statisticspage";
 import StatisticsResultPage from "./components/statistics_result_page";
 import Complaintdetails from "./components/complaintdetailspage"
