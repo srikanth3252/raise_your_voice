@@ -1,0 +1,160 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Poppins",sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:#f4f6f9;
+}
+
+.Statistics{
+    width:100%;
+    max-width:900px;
+
+    margin:40px auto;
+
+    background:white;
+
+    padding:40px;
+
+    border-radius:20px;
+
+    box-shadow:0 8px 25px rgba(0,0,0,0.08);
+}
+
+.Statistics h1:first-child{
+    text-align:center;
+    font-size:38px;
+    color:#111827;
+    margin-bottom:10px;
+}
+
+.intro-text{
+    text-align:center;
+    color:#6b7280;
+    font-size:16px;
+    line-height:1.6;
+    margin-bottom:35px;
+}
+
+.Statistics label{
+    display:block;
+    margin-bottom:8px;
+
+    font-size:15px;
+    font-weight:500;
+
+    color:#374151;
+}
+
+#select{
+    width:100%;
+
+    padding:14px;
+
+    border:1px solid #d1d5db;
+    border-radius:12px;
+
+    font-size:15px;
+
+    outline:none;
+    background:white;
+
+    margin-bottom:20px;
+}
+
+#select:focus{
+    border-color:#2563eb;
+}
+
+.date-container{
+    display:flex;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.date-container input{
+    flex:1;
+
+    padding:14px;
+
+    border:1px solid #d1d5db;
+    border-radius:12px;
+
+    font-size:15px;
+
+    outline:none;
+}
+
+.date-container input:focus{
+    border-color:#2563eb;
+}
+
+.show-btn{
+    width:100%;
+
+    padding:14px;
+
+    border:none;
+    border-radius:12px;
+
+    background:#2563eb;
+    color:white;
+
+    font-size:16px;
+    font-weight:500;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.show-btn:hover{
+    background:#1d4ed8;
+}
+
+.statistics-overview{
+    margin-top:35px;
+
+    padding:25px;
+
+    border-radius:15px;
+
+    background:#f9fafb;
+
+    text-align:center;
+}
+
+.statistics-overview h2{
+    color:#111827;
+    font-size:32px;
+    margin-bottom:10px;
+}
+
+.statistics-overview p{
+    color:#6b7280;
+    font-size:16px;
+    line-height:1.6;
+}
+
+@media(max-width:700px){
+
+    .Statistics{
+        padding:25px;
+    }
+
+    .Statistics h1:first-child{
+        font-size:30px;
+    }
+
+    .date-container{
+        flex-direction:column;
+    }
+
+    .statistics-overview h2{
+        font-size:26px;
+    }
+}.
