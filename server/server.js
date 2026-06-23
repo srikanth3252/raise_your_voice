@@ -35,13 +35,14 @@ app.use(cors());
 
 app.use(express.json());
 /* NODEMAILER */
-
 const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: "srikanthreddybapatu04@gmail.com",
-        pass: "yfiq tjbp fjjl voxi"
-    }
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
 });
 
 transporter.verify((error, success) => {
