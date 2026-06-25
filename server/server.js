@@ -65,11 +65,7 @@ app.post("/send-otp", async (req, res) => {
         });
     }
 
-    if (!email.endsWith("@srmap.edu.in")) {
-        return res.status(400).json({
-            message: "Only SRM AP mails allowed"
-        });
-    }
+    
 
     const otp = generateotp();
 
