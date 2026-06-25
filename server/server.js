@@ -33,14 +33,6 @@ app.use(cors());
 
 app.use(express.json());
 
-const SibApiV3Sdk = require("@getbrevo/brevo");
-
-const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-
-apiInstance.setApiKey(
-    SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey,
-    process.env.BREVO_API_KEY
-);
 
 /* OTP STORE */
 
@@ -60,10 +52,11 @@ function generateotp()
 
 /* SEND OTP */
 
+const axios = require("axios");
+
 app.post("/send-otp", async (req, res) => {
 
     const { email: emailid } = req.body;
-
     const email = emailid?.trim().toLowerCase();
 
     if (!email) {
@@ -72,7 +65,6 @@ app.post("/send-otp", async (req, res) => {
         });
     }
 
-    // Only SRM AP emails are allowed
     if (!email.endsWith("@srmap.edu.in")) {
         return res.status(400).json({
             message: "Only SRM AP emails are allowed"
@@ -80,51 +72,48 @@ app.post("/send-otp", async (req, res) => {
     }
 
     const otp = generateotp();
-
     store[email] = otp;
 
     try {
 
-        await apiInstance.sendTransacEmail({
-
-            sender: {
-                name: "Raise Your Voice",
-                email: "srikanthreddybapatu04@gmail.com"   // Your verified Brevo sender
+        await axios.post(
+            "https://api.brevo.com/v3/smtp/email",
+            {
+                sender: {
+                    name: "Raise Your Voice",
+                    email: "srikanthreddybapatu04@gmail.com"
+                },
+                to: [
+                    {
+                        email: email
+                    }
+                ],
+                subject: "OTP Verification",
+                htmlContent: `<h2>Your OTP is <b>${otp}</b></h2>`
             },
-
-            to: [
-                {
-                    email: email
+            {
+                headers: {
+                    "api-key": process.env.BREVO_API_KEY,
+                    "Content-Type": "application/json"
                 }
-            ],
-
-            subject: "OTP Verification",
-
-            htmlContent: `
-                <h2>Raise Your Voice</h2>
-                <p>Your OTP is:</p>
-                <h1>${otp}</h1>
-                <p>This OTP is valid for a short time.</p>
-            `
-        });
+            }
+        );
 
         return res.status(200).json({
             message: "OTP sent successfully"
         });
 
-    } catch (error) {
+    } catch (err) {
 
-        console.log("BREVO ERROR");
-console.log(JSON.stringify(error, null, 2));
+        console.log(err.response?.data || err);
 
-return res.status(500).json({
-    message: error.message,
-    error: error
-});
+        return res.status(500).json({
+            message: "Failed to send OTP"
+        });
+
     }
 
 });
-
 /* VERIFY OTP */
 
 app.post("/verify-otp",(req,res)=>
