@@ -33,9 +33,14 @@ app.use(cors());
 
 app.use(express.json());
 
-const { Resend } = require("resend");
+const SibApiV3Sdk = require("@getbrevo/brevo");
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+
+apiInstance.setApiKey(
+    SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey,
+    process.env.BREVO_API_KEY
+);
 
 /* OTP STORE */
 
@@ -53,6 +58,8 @@ function generateotp()
 
 /* SEND OTP */
 
+/* SEND OTP */
+
 app.post("/send-otp", async (req, res) => {
 
     const { email: emailid } = req.body;
@@ -65,7 +72,12 @@ app.post("/send-otp", async (req, res) => {
         });
     }
 
-    
+    // Only SRM AP emails are allowed
+    if (!email.endsWith("@srmap.edu.in")) {
+        return res.status(400).json({
+            message: "Only SRM AP emails are allowed"
+        });
+    }
 
     const otp = generateotp();
 
@@ -73,11 +85,27 @@ app.post("/send-otp", async (req, res) => {
 
     try {
 
-        await resend.emails.send({
-            from: "Raise Your Voice <onboarding@resend.dev>",
-            to: email,
+        await apiInstance.sendTransacEmail({
+
+            sender: {
+                name: "Raise Your Voice",
+                email: "srikanthreddybapatu04@gmail.com"   // Your verified Brevo sender
+            },
+
+            to: [
+                {
+                    email: email
+                }
+            ],
+
             subject: "OTP Verification",
-            html: `<h2>Your OTP is ${otp}</h2>`
+
+            htmlContent: `
+                <h2>Raise Your Voice</h2>
+                <p>Your OTP is:</p>
+                <h1>${otp}</h1>
+                <p>This OTP is valid for a short time.</p>
+            `
         });
 
         return res.status(200).json({
@@ -86,20 +114,16 @@ app.post("/send-otp", async (req, res) => {
 
     } catch (error) {
 
-    console.log("RESEND ERROR:");
-    console.log(JSON.stringify(error, null, 2));
+        console.log("BREVO ERROR");
+console.log(JSON.stringify(error, null, 2));
 
-    return res.status(500).json({
-        message: error.message,
-        error: error
-    });
-
-}
-
+return res.status(500).json({
+    message: error.message,
+    error: error
+});
     }
 
 });
-
 
 /* VERIFY OTP */
 
