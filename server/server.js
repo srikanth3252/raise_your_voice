@@ -86,11 +86,15 @@ app.post("/send-otp", async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+    console.log("RESEND ERROR:");
+    console.log(JSON.stringify(error, null, 2));
 
-        return res.status(500).json({
-            message: error.message
-        });
+    return res.status(500).json({
+        message: error.message,
+        error: error
+    });
+
+}
 
     }
 
