@@ -1,29 +1,37 @@
+const fs = require("fs");
 require("dotenv").config();
+
 
 const express = require("express");
 
 const cors = require("cors");
 
 const multer = require("multer");
+const path = require("path");
 
-const storage = multer.diskStorage(
-    {
-        destination:(req,file,cb)=>
-          {
-             cb(null,"uploads/");
-          },
-        filename:(req,file,cb)=>
-          {
-             cb(null,Date.now() + "-" + file.originalname);
-          }
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const uploadPath = path.join(__dirname, "uploads");
+
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+
+        cb(null, uploadPath);
+    },
+
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "-" + file.originalname);
+    }
 });
 
 const upload = multer({storage});
 
 const app = express();
 
-app.use("/uploads", express.static("uploads"));
+const uploadPath = path.join(__dirname, "uploads");
 
+app.use("/uploads", express.static(uploadPath));
 const db = require("./db");
 
 const port = process.env.PORT || 2000;
@@ -48,7 +56,7 @@ function generateotp()
 }
 
 
-/* SEND OTP */
+
 
 /* SEND OTP */
 
