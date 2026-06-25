@@ -1,13 +1,12 @@
 const fs = require("fs");
 require("dotenv").config();
 
-
 const express = require("express");
-
 const cors = require("cors");
-
 const multer = require("multer");
 const path = require("path");
+
+const app = express();   // ✅ MUST BE HERE
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -25,21 +24,28 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({storage});
+const upload = multer({
+    storage,
+    limits: {
+        fileSize: 50 * 1024 * 1024
+    }
+});
 
-const app = express();
+app.use(cors());
+
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({
+    extended: true,
+    limit: "50mb"
+}));
 
 const uploadPath = path.join(__dirname, "uploads");
 
 app.use("/uploads", express.static(uploadPath));
+
 const db = require("./db");
 
 const port = process.env.PORT || 2000;
-/* MIDDLEWARE */
-
-app.use(cors());
-
-app.use(express.json());
 
 
 /* OTP STORE */
@@ -182,44 +188,98 @@ app.post("/insertusers",(req,res)=>
 
 // route to store the complaints
 
-app.post("/complaint", upload.single("proof"), (req,res)=>{
+// =================== COMPLAINT ROUTE ===================
 
-    console.log(req.body);
-    console.log(req.file);
-    const { title, complaintCategory, complaintDescription } = req.body;
-    const filePath = req.file ? req.file.path : null;
+app.post("/complaint", upload.single("proof"), (req, res) => {
 
-    let email = req.body.email;   // send from frontend
+    try {
 
-    const query = "SELECT user_id FROM users WHERE email=?";
+        console.log("Complaint API called");
+        console.log("BODY:", req.body);
+        console.log("FILE:", req.file);
 
-    db.query(query,[email],(error,result)=>
-    {
+        const { title, complaintCategory, complaintDescription, email } = req.body;
 
-        if(error)
-        {
-            return res.status(500).json({message:error.message});
+        if (!title || !complaintCategory || !complaintDescription || !email) {
+            return res.status(400).json({
+                message: "All fields are required"
+            });
         }
-        if(result.length === 0)
-        {
-            return res.status(404).json({message:"User not found"});
+
+        if (!req.file) {
+            return res.status(400).json({
+                message: "Please upload a proof"
+            });
         }
-        let user_id = result[0].user_id;
 
-        const sql = ` INSERT INTO complaints (user_id,title,category,description,proof) VALUES(?,?,?,?,?)`;
+        const filePath = req.file.path;
 
-        db.query(sql,[user_id,title,complaintCategory,complaintDescription,filePath],(err,result)=>
-        {
-            if(err)
-            {
+        const getUserQuery =
+            "SELECT user_id FROM users WHERE email = ?";
+
+        db.query(getUserQuery, [email], (err, result) => {
+
+            if (err) {
                 console.log(err);
-                return res.status(500).json({message:"DB error"});
+                return res.status(500).json({
+                    message: err.message
+                });
             }
 
-             return res.json({ message:"Complaint raised successfully and complaint is inserted in database",  complaint_id: result.insertId});
+            if (result.length === 0) {
+                return res.status(404).json({
+                    message: "User not found"
+                });
+            }
+
+            const user_id = result[0].user_id;
+
+            const insertComplaint = `
+                INSERT INTO complaints
+                (user_id, title, category, description, proof)
+                VALUES (?, ?, ?, ?, ?)
+            `;
+
+            db.query(
+                insertComplaint,
+                [
+                    user_id,
+                    title,
+                    complaintCategory,
+                    complaintDescription,
+                    filePath
+                ],
+                (error, result2) => {
+
+                    if (error) {
+                        console.log(error);
+
+                        return res.status(500).json({
+                            message: error.message
+                        });
+                    }
+
+                    return res.status(200).json({
+                        message: "Complaint raised successfully",
+                        complaint_id: result2.insertId
+                    });
+
+                }
+            );
+
         });
 
-    });
+    }
+    catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json({
+            message: error.message
+        });
+
+    }
+
 });
 
 // route to get the complaints from database;
@@ -655,6 +715,25 @@ app.post("/updatecomplaintstatus",(req,res)=>
     });
 });
 
+app.use((err, req, res, next) => {
+
+    if (err instanceof multer.MulterError) {
+
+        console.log("Multer Error:", err);
+
+        return res.status(400).json({
+            message: err.message
+        });
+
+    }
+
+    console.log("Server Error:", err);
+
+    return res.status(500).json({
+        message: err.message
+    });
+
+});
 /* SERVER */
 
 app.listen(port,()=>
