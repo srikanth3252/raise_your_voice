@@ -4,8 +4,6 @@ const express = require("express");
 
 const cors = require("cors");
 
-const nodemailer = require("nodemailer");
-
 const multer = require("multer");
 
 const storage = multer.diskStorage(
@@ -34,25 +32,10 @@ const port = process.env.PORT || 2000;
 app.use(cors());
 
 app.use(express.json());
-/* NODEMAILER */
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
 
-transporter.verify((error, success) => {
-    if (error) {
-        console.log("MAIL ERROR:", error);
-    } else {
-        console.log("MAIL SERVER READY");
-    }
-});
+const { Resend } = require("resend");
 
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /* OTP STORE */
 
@@ -70,50 +53,52 @@ function generateotp()
 
 /* SEND OTP */
 
-app.post("/send-otp", async (req,res)=>
-{
-      const { email: emailid } = req.body;
+app.post("/send-otp", async (req, res) => {
 
-      const email = emailid?.trim().toLowerCase();
+    const { email: emailid } = req.body;
 
-      if(!email)
-      {
-          return res.status(400).json({message:"Enter valid email"});
-      }
+    const email = emailid?.trim().toLowerCase();
 
-      if(!email.endsWith("@srmap.edu.in"))
-      {
-          return res.status(400).json({message:"Only SRM AP mails allowed"});
-      }
+    if (!email) {
+        return res.status(400).json({
+            message: "Enter valid email"
+        });
+    }
 
-      const otp = generateotp();
+    if (!email.endsWith("@srmap.edu.in")) {
+        return res.status(400).json({
+            message: "Only SRM AP mails allowed"
+        });
+    }
 
-      store[email] = otp;
+    const otp = generateotp();
 
-      try
-      {
-          await transporter.sendMail({
+    store[email] = otp;
 
-              from:'"Srikanth" <srikanthreddybapatu04@gmail.com>',
+    try {
 
-              to:email,
+        await resend.emails.send({
+            from: "Raise Your Voice <onboarding@resend.dev>",
+            to: email,
+            subject: "OTP Verification",
+            html: `<h2>Your OTP is ${otp}</h2>`
+        });
 
-              subject:"OTP Verification",
+        return res.status(200).json({
+            message: "OTP sent successfully"
+        });
 
-              text:`Your OTP is ${otp}`
-          });
+    } catch (error) {
 
-          return res.status(200).json({message:"OTP sent successfully"});
-      }
-      catch(error)
-{
-    console.log("OTP ERROR FULL:", error);
-    return res.status(500).json({
-        message: error.message
-    });
-}
+        console.log(error);
+
+        return res.status(500).json({
+            message: error.message
+        });
+
+    }
+
 });
-
 
 
 /* VERIFY OTP */
